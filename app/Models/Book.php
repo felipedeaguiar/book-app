@@ -19,4 +19,11 @@ class Book extends Model
         'pages' => 'required|integer',
         'image' => 'required'
     ];
+
+    public function books()
+    {
+        return $this->belongsToMany(User::class,'my_books')
+            ->using(MyBook::class)
+            ->withPivot(['id','current_page','status']);
+    }
 }

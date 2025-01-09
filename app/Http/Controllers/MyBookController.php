@@ -20,29 +20,43 @@ class MyBookController extends Controller
     }
 
     public function index(Request $request)
-    {       
-        $result = Auth::user()->books;
-        
+    {
+        $result = Auth::user()->books()->orderBy('created_at', 'DESC')->get();
+
         return response()->json($result);
     }
 
     public function store(Request $request)
     {
-
         $rules = [
             'book_id' => 'required',
         ];
 
         $validator = \Validator::make($request->all(), $rules);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
         $book = Book::where('google_id', $request->book_id)->first();
 
+        if (!empty($book) && Auth::user()->books()->exists($book->id)) {
+           throw new \Exception('Já existe');
+        }
+
         if (empty($book)) {
             $result = $this->googleService->getVolume($request->book_id);
+
+            if (property_exists($result, 'error')) {
+                throw new \Exception('Invalid book');
+            }
+
             $book         = new Book();
             $book->name   = $result->volumeInfo->title;
-            $book->author = $result->volumeInfo->authors[0];
+            $book->author = $result->volumeInfo->authors ? $result->volumeInfo->authors[0] : '';
             $book->pages  = $result->volumeInfo->pageCount;
             $book->image  = $result->volumeInfo->imageLinks->smallThumbnail;
             $book->google_id = $result->id;
@@ -50,12 +64,10 @@ class MyBookController extends Controller
             $book->save();
         }
 
-        $myBook = MyBook::create([
-            'user_id' => 1,
-            'book_id' => $book->id,
-            'current_page' => 0, // Por padrão, inicia na primeira página
+        $myBook = Auth::user()->books()->attach($book->id,[
+            'current_page' => 0,
             'status' => 'in_progress',
-            'notes' => null, // Notas iniciais, se necessário
+            'notes' => null,
         ]);
 
         return response()->json(['success' => true, 'data'=> $myBook],201);
@@ -63,28 +75,42 @@ class MyBookController extends Controller
 
     public function changePage(Request $request, $id)
 	{
-		$rules = [
-			'page' => 'required',
-		];
+        try {
+            $rules = [
+                'page' => 'required|integer',
+            ];
 
-		$validator = \Validator::make($request->all(), $rules);
+            $validator = \Validator::make($request->all(), $rules);
 
-		if ($validator->fails()) {
-			 return response()->json([
-				'success' => false,
-				'errors' => $validator->errors()
-			], 422);
-		}
+            if ($validator->fails()) {
+                throw new \Exception($validator->errors());
+            }
 
-		$myBook = MyBook::findOrFail($id);
+            $userBook = Auth::user()->books()->where('book_id', $id)->first();
 
-		if ($request->page > Book::find($myBook->book_id)->pages) {
-			throw new \Exception('Não pode');
-		}
+            $userBook->pivot->atualizaPagina($request->page);
 
-		$myBook->current_page = $request->page;
-		$myBook->save();
+            return response()->json(['success' => true]);
 
-		return $myBook;
+        }catch (\Exception $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => !is_string($exception->getMessage()) ? json_decode($exception->getMessage()) : $exception->getMessage()
+            ]);
+        }
 	}
+
+	public function destroy($id)
+    {
+        try {
+            if (Auth::user()->books()->where('book_id', $id)->first()) {
+                Auth::user()->books()->detach($id);
+                return response()->json(['success' => true]);
+            } else {
+                return response()->json(['success' => false]);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'Não foi encontrado']);
+        }
+    }
 }

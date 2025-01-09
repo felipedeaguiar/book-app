@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class MyBook extends Model
+
+class MyBook extends Pivot
 {
     use HasFactory;
 
@@ -18,4 +20,31 @@ class MyBook extends Model
         'image' => 'required'
     ];
 
+    public function atualizaPagina($page)
+    {
+       if ($page > $this->book->pages) {
+            throw new \Exception('Não pode fazer esta operação');
+       }
+
+       if ($this->status == 'finished') {
+            throw new \Exception('Não é possível mudar um livro finalizado');
+       }
+
+       if ($page == $this->book->pages) {
+           $this->status = 'finished';
+       }
+
+       $this->current_page = $page;
+       $this->save();
+    }
+
+    public function book()
+    {
+        return $this->belongsTo(Book::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
