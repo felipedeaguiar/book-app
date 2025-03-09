@@ -29,6 +29,13 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+     const RULES = [
+         'email' => ['required', 'email', 'unique:users'],
+         'password' => ['required','min:8','max:20'],
+         'name'     => ['required', 'max:50']
+     ];
+     
     protected $hidden = [
         'password',
         'remember_token',
