@@ -8,6 +8,6 @@
 <body>
 <h2>Password Reset</h2>
 <p>We received a request to reset your password. Click the link below to reset it:</p>
-<a href="{{ $resetUrl }}">Reset Password</a>
+<a href="">Reset Password</a>
 </body>
 </html>

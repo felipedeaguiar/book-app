@@ -88,6 +88,9 @@ class AuthController extends Controller
 
     public function showProfile()
     {
+        $user = Auth::user();
+        $user['photo'] = route('profilePic');
+
         return response()->json(['success' => true, 'data' => Auth::user()], 200);
     }
 
@@ -95,7 +98,7 @@ class AuthController extends Controller
     {
         try{
             $user = Auth::user();
-            
+
             $rules = User::RULES;
 
             unset($rules['password']);
@@ -105,7 +108,7 @@ class AuthController extends Controller
             }
 
             $request->validate($rules);
-            
+
                //se não estiver vazio, é troca de senha também
             if (!empty($request->get('old_password')) && !empty($request->get('password'))) {
                 $rules['password'] = ['required','min:8','max:20'];
@@ -117,16 +120,16 @@ class AuthController extends Controller
                 $user->password = \Hash::make($request->get('password'));
             }
 
-        
+
             $user->fill($request->except('password'));
-    
+
             $this->userService->save($user);
-    
+
             return response()->json(['success' => true], 200);
 
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'message' => $e->getMessage()], 422);
-        
+
         }
     }
 
@@ -136,5 +139,36 @@ class AuthController extends Controller
 
         return response()->json(['success' => true], 200);
     }
-    
+
+    public function updatePicture(Request $request)
+    {
+        $user = Auth::user();
+
+        $rules = [
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ];
+
+        $request->validate($rules);
+
+        $photo = $request->file('file');
+        $path  = $photo->store('profile/pics');
+
+        $user->profile_pic = $path;
+
+        $this->userService->save($user);
+
+        return response()->json(['success' => true], 200);
+    }
+
+    public function getPicture()
+    {
+        $user = Auth::user();
+        $path = storage_path('app/'.$user->profile_pic);
+        $mimeType = mime_content_type($path);
+
+        return response()->file($path, [
+            'Content-Type' => $mimeType,
+        ]);
+    }
+
 }

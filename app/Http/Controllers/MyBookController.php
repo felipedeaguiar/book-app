@@ -21,7 +21,13 @@ class MyBookController extends Controller
 
     public function index(Request $request)
     {
-        $result = Auth::user()->books()->orderBy('created_at', 'DESC')->get();
+        $query = Auth::user()->books();
+
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $result = $query->orderBy('created_at', 'DESC')->get();
 
         return response()->json($result);
     }
