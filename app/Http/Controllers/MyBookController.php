@@ -23,7 +23,7 @@ class MyBookController extends Controller
     {
         $query = Auth::user()->books();
 
-        if ($request->has('search') && !empty($request->search)) {
+        if ($request->has('search') && !empty($request->search) && $request->search != 'undefined') {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 

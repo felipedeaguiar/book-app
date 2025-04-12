@@ -95,9 +95,9 @@ class UserService
             'email'      => $email
         ];
 
-        dd(Mail::to($email)->send(new ResetPassword($params)));
+       Mail::to($email)->send(new ResetPassword($params));
 
-        throw new \Exception('Failed to send the reset link. Please try again later.');
+       return true;
     }
 
 }
