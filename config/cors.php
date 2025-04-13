@@ -8,7 +8,7 @@ return [
 
     'allowed_origins' => [
         'http://localhost:4200', // Ionic local
-        'http://localhost:80', // Ionic local
+        'http://localhost:8080', // Ionic local
     ],
 
     'allowed_origins_patterns' => [],
