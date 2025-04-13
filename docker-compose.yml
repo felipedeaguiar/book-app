@@ -6,6 +6,9 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
+            args:
+                uid: ${UID:-1000}
+                user: laravel
         restart: unless-stopped
         working_dir: /var/www/
         volumes:
