@@ -1,0 +1,8 @@
+services:
+  app:
+    volumes: []  # Remove o volume do código em produção
+    environment:
+      APP_DEBUG: false
+  nginx:
+    volumes:
+      - ./docker/nginx/:/etc/nginx/conf.d/

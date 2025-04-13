@@ -1,31 +1,30 @@
 version: "3.7"
 
 services:
-    # image project
     app:
         build:
             context: .
             dockerfile: Dockerfile
+            args:
+                uid: ${UID:-1000}
+                user: laravel
         restart: unless-stopped
         working_dir: /var/www/
-        volumes:
-            - ./:/var/www
         networks:
             - laravel
 
-    # nginx
     nginx:
         image: nginx:alpine
         restart: unless-stopped
         ports:
             - "8989:80"
         volumes:
-            - ./:/var/www
             - ./docker/nginx/:/etc/nginx/conf.d/
+        depends_on:
+            - app
         networks:
             - laravel
 
-    # db mysql
     db:
         image: mysql:5.7.22
         restart: unless-stopped
@@ -40,8 +39,6 @@ services:
             - "3307:3306"
         networks:
             - laravel
-
-
 
 networks:
     laravel:

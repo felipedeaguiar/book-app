@@ -1,10 +1,9 @@
 FROM php:8.3-fpm
 
-# set your user name, ex: user=carlos
-ARG user=root
+ARG user=laravel
 ARG uid=1000
 
-# Install system dependencies
+# Instalações básicas
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -12,31 +11,32 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     zip \
-    unzip
+    unzip \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions
+# Instala extensões PHP
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd sockets
 
-# Get latest Composer
+# Redis
+RUN pecl install redis && docker-php-ext-enable redis
+
+# Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Create system user to run Composer and Artisan Commands
-RUN useradd -G www-data,root -u $uid -d /home/$user $user
-RUN mkdir -p /home/$user/.composer && \
+# Cria usuário com mesmo UID que host
+RUN useradd -G www-data,root -u $uid -d /home/$user $user && \
+    mkdir -p /home/$user/.composer && \
     chown -R $user:$user /home/$user
 
-# Install redis
-RUN pecl install -o -f redis \
-    &&  rm -rf /tmp/pear \
-    &&  docker-php-ext-enable redis
-
-# Set working directory
+# Diretório do projeto
 WORKDIR /var/www
 
-# Copy custom configurations PHP
-COPY docker/php/custom.ini /usr/local/etc/php/conf.d/custom.ini
+# Copia o código Laravel (e muda o dono dos arquivos)
+COPY . /var/www
+RUN chown -R $user:$user /var/www
 
+# Adiciona diretório seguro do Git
+RUN git config --global --add safe.directory /var/www
+
+# Usa o novo usuário
 USER $user
