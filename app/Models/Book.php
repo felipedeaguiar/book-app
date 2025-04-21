@@ -24,6 +24,6 @@ class Book extends Model
     {
         return $this->belongsToMany(User::class,'my_books')
             ->using(MyBook::class)
-            ->withPivot(['id','current_page','status']);
+            ->withPivot(['id','current_page','status','file']);
     }
 }

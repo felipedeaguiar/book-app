@@ -35,7 +35,7 @@ class User extends Authenticatable
          'password' => ['required','min:8','max:20'],
          'name'     => ['required', 'max:50']
      ];
-     
+
     protected $hidden = [
         'password',
         'remember_token',
@@ -58,6 +58,6 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Book::class,'my_books')
             ->using(MyBook::class)
-            ->withPivot(['id','current_page','status']);
+            ->withPivot(['id','current_page','status', 'file']);
     }
 }

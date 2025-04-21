@@ -11,13 +11,15 @@ class MyBook extends Pivot
 {
     use HasFactory;
 
-    protected $fillable = ['current_page','status','notes','user_id','book_id'];
+    protected $table = 'my_books';
+
+    protected $fillable = ['current_page','status','notes','user_id','book_id','file'];
 
     static $rules = [
         'name' => 'required|max:200',
         'author' => 'required|max:200',
         'pages' => 'required|integer',
-        'image' => 'required'
+        'image' => 'required',
     ];
 
     public function atualizaPagina($page)

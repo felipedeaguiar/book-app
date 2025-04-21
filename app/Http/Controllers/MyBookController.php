@@ -119,4 +119,54 @@ class MyBookController extends Controller
             return response()->json(['success' => false, 'Não foi encontrado']);
         }
     }
+
+    public function upload()
+    {
+        $rules = [
+            'file' => 'required|mimes:pdf|max:4096',
+        ];
+
+        $validator = \Validator::make(request()->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $userId = Auth::user()->id;
+
+        $file = request()->file('file');
+        $path = $file->store('user/'.$userId.'/books');
+
+        $myBook       = MyBook::where('user_id', $userId)->where('book_id', request()->id)->first();
+        $myBook->file = $path;
+        $myBook->save();
+
+        return response()->json(['success' => true, 'path' => $path], 201);
+    }
+
+    public function download()
+    {
+        $userId = Auth::user()->id;
+
+        $myBook = MyBook::where('user_id', $userId)->where('book_id', request()->id)->first();
+
+        if (empty($myBook) || empty($myBook->file)) {
+            return response()->json(['success' => false, 'message' => 'File not found'], 404);
+        }
+
+        $path     = storage_path('app/'.$myBook->file);
+
+        if (!file_exists($path)) {
+            return response()->json(['success' => false, 'message' => 'File not found'], 404);
+        }
+
+        $mimeType = mime_content_type($path);
+
+        return response()->file($path, [
+            'Content-Type' => $mimeType,
+        ]);
+    }
 }

@@ -16,7 +16,6 @@ services:
         networks:
             - laravel
 
-    # nginx
     nginx:
         image: nginx:alpine
         restart: unless-stopped
@@ -43,7 +42,15 @@ services:
             - "3307:3306"
         networks:
             - laravel
-
+    frontend:
+        build:
+            context: ../book-app-front
+            dockerfile: Dockerfile
+        container_name: book-app-frontend
+        ports:
+            - "8080:80"
+        networks:
+            - laravel
 
 
 networks:
