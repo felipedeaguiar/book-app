@@ -145,15 +145,20 @@ class AuthController extends Controller
         $user = Auth::user();
 
         $rules = [
-            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:1024',
         ];
 
         $request->validate($rules);
 
         $photo = $request->file('file');
+
         $path  = $photo->store('profile/pics');
 
-        $user->profile_pic = $path;
+        $destinationPath = storage_path('/app/profile/pics/thumbnail/'.$photo->hashName());
+
+        $this->userService->generateThumbnail(storage_path('/app/'.$path), $destinationPath , 150, 150);
+
+        $user->profile_pic = 'profile/pics/thumbnail/'.$photo->hashName();
 
         $this->userService->save($user);
 
@@ -170,4 +175,5 @@ class AuthController extends Controller
             'Content-Type' => $mimeType,
         ]);
     }
+
 }

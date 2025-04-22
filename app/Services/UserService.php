@@ -100,4 +100,60 @@ class UserService
        return true;
     }
 
+    public function generateThumbnail($sourcePath, $destinationPath, $width, $height) {
+        // Verifica o tipo de imagem
+        $imageInfo = getimagesize($sourcePath);
+        $imageType = $imageInfo[2];
+
+        // Cria a imagem a partir do arquivo original
+        switch ($imageType) {
+            case IMAGETYPE_JPEG:
+                $sourceImage = imagecreatefromjpeg($sourcePath);
+                break;
+            case IMAGETYPE_PNG:
+                $sourceImage = imagecreatefrompng($sourcePath);
+                break;
+            case IMAGETYPE_GIF:
+                $sourceImage = imagecreatefromgif($sourcePath);
+                break;
+            default:
+                throw new Exception('Formato de imagem não suportado.');
+        }
+
+        // Obtém as dimensões originais
+        $originalWidth = imagesx($sourceImage);
+        $originalHeight = imagesy($sourceImage);
+
+        // Cria uma nova imagem com as dimensões do thumbnail
+        $thumbnail = imagecreatetruecolor($width, $height);
+
+        // Redimensiona a imagem original para o thumbnail
+        imagecopyresampled(
+            $thumbnail,
+            $sourceImage,
+            0, 0, 0, 0,
+            $width, $height,
+            $originalWidth, $originalHeight
+        );
+
+        // Salva o thumbnail no destino especificado
+        switch ($imageType) {
+            case IMAGETYPE_JPEG:
+                imagejpeg($thumbnail, $destinationPath);
+                break;
+            case IMAGETYPE_PNG:
+                imagepng($thumbnail, $destinationPath);
+                break;
+            case IMAGETYPE_GIF:
+                imagegif($thumbnail, $destinationPath);
+                break;
+        }
+
+        // Libera a memória
+        imagedestroy($sourceImage);
+        imagedestroy($thumbnail);
+
+        return true;
+    }
+
 }
