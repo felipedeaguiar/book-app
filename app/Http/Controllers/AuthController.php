@@ -145,7 +145,7 @@ class AuthController extends Controller
         $user = Auth::user();
 
         $rules = [
-            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:1024',
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:10000',
         ];
 
         $request->validate($rules);
@@ -162,7 +162,7 @@ class AuthController extends Controller
 
         $this->userService->save($user);
 
-        return response()->json(['success' => true], 200);
+        return response()->json(['success' => true, 'message' => 'Imagem alterada com sucesso'], 200);
     }
 
     public function getPicture()

@@ -7,15 +7,24 @@ ARG uid=1000
 RUN apt-get update && apt-get install -y \
     git \
     curl \
+    unzip \
+    zip \
     libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
-    zip \
-    unzip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+        pdo_mysql \
+        mbstring \
+        exif \
+        pcntl \
+        bcmath \
+        gd \
+        sockets \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instala extensões PHP
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd sockets
 
 # Redis
 RUN pecl install redis && docker-php-ext-enable redis
@@ -37,6 +46,8 @@ RUN chown -R $user:$user /var/www
 
 # Adiciona diretório seguro do Git
 RUN git config --global --add safe.directory /var/www
+
+COPY ./docker/php/custom.ini /usr/local/etc/php/conf.d/uploads.ini
 
 # Usa o novo usuário
 USER $user
