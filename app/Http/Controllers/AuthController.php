@@ -150,6 +150,10 @@ class AuthController extends Controller
 
         $request->validate($rules);
 
+        if (!empty($user->profile_pic)) {
+            \File::delete(storage_path('/app/'.$user->profile_pic));
+        }
+
         $photo = $request->file('file');
 
         $path  = $photo->store('profile/pics');
@@ -159,6 +163,8 @@ class AuthController extends Controller
         $this->userService->generateThumbnail(storage_path('/app/'.$path), $destinationPath , 150, 150);
 
         $user->profile_pic = 'profile/pics/thumbnail/'.$photo->hashName();
+
+        \File::delete(storage_path('/app/'.$path));
 
         $this->userService->save($user);
 
