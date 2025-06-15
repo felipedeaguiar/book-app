@@ -32,6 +32,17 @@ class MyBookController extends Controller
         return response()->json($result);
     }
 
+    public function detail($id)
+    {
+        $myBook = Auth::user()->books()->where('book_id', $id)->first();
+
+        if (empty($myBook)) {
+            return response()->json(['success' => false, 'message' => 'Book not found'], 404);
+        }
+
+        return response()->json(['success' => true, 'data' => $myBook]);
+    }
+
     public function store(Request $request)
     {
         $rules = [

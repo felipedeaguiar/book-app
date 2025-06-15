@@ -9,6 +9,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/books', [\App\Http\Controllers\BookController::class,'store']);
     Route::post('/my-books', [\App\Http\Controllers\MyBookController::class,'store']);
     Route::get('/my-books', [\App\Http\Controllers\MyBookController::class,'index']);
+    Route::get('/my-books/{id}', [\App\Http\Controllers\MyBookController::class,'detail']);
     Route::get('/my-books/{id}/download', [\App\Http\Controllers\MyBookController::class,'download']);
     Route::put('/my-books/{id}/change-page', [\App\Http\Controllers\MyBookController::class,'changePage']);
     Route::post('/my-books/{id}/upload', [\App\Http\Controllers\MyBookController::class,'upload']);
