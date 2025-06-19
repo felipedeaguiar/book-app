@@ -76,13 +76,15 @@ class AuthController extends Controller
         $request->validate($rules);
 
         $email = $request->email;
-
-        $this->userService->sendResetLinkEmail($email);
+        
+        try {
+            $this->userService->sendResetLinkEmail($email);
+        } catch (\Exception $e) {}
 
         return response()->json(
             [
                 'status' => true,
-                'message' => 'Um email contendo as instruções foi enviado.'
+                'message' => 'Se houver uma conta associada a este usuário um email com instruções será enviado.'
             ], 200);
     }
 

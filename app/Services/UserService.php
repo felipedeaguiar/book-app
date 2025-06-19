@@ -95,7 +95,7 @@ class UserService
             'email'      => $email
         ];
 
-       Mail::to($email)->send(new ResetPassword($params));
+       Mail::to($email)->queue(new ResetPassword($params));
 
        return true;
     }
