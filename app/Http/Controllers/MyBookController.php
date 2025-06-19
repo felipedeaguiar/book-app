@@ -40,6 +40,7 @@ class MyBookController extends Controller
             return response()->json(['success' => false, 'message' => 'Book not found'], 404);
         }
 
+
         return response()->json(['success' => true, 'data' => $myBook]);
     }
 
@@ -59,11 +60,7 @@ class MyBookController extends Controller
         }
 
         $book = Book::where('google_id', $request->book_id)->first();
-
-        if (!empty($book) && Auth::user()->books()->exists($book->id)) {
-           throw new \Exception('Já existe');
-        }
-
+        
         if (empty($book)) {
             $result = $this->googleService->getVolume($request->book_id);
 

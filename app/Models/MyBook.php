@@ -27,13 +27,16 @@ class MyBook extends Pivot
        if ($page > $this->book->pages) {
             throw new \Exception('Não pode fazer esta operação');
        }
+       
+        if ($page < 0) {
+            throw new \Exception('Página inválida');
+        }
 
-       if ($this->status == 'finished') {
-            throw new \Exception('Não é possível mudar um livro finalizado');
-       }
-
+   
        if ($page == $this->book->pages) {
            $this->status = 'finished';
+       } else {
+           $this->status = 'in_progress';
        }
 
        $this->current_page = $page;
