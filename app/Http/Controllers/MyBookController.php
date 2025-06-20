@@ -60,7 +60,7 @@ class MyBookController extends Controller
         }
 
         $book = Book::where('google_id', $request->book_id)->first();
-        
+
         if (empty($book)) {
             $result = $this->googleService->getVolume($request->book_id);
 
@@ -131,7 +131,7 @@ class MyBookController extends Controller
     public function upload()
     {
         $rules = [
-            'file' => 'required|mimes:pdf|max:4096',
+            'file' => 'required|mimes:pdf|max:8192',
         ];
 
         $validator = \Validator::make(request()->all(), $rules);
