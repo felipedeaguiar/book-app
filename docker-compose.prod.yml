@@ -34,14 +34,6 @@ services:
       - "3306:3306"
     networks:
       - laravel
-  queue:
-    image: felipeaguiarphp/book-app:latest
-    command: php artisan queue:work database --sleep=3 --tries=3 --timeout=90
-    restart: unless-stopped
-    depends_on:
-      - db
-    networks:
-      - laravel
   frontend:
     build:
         context: ../book-app-front
