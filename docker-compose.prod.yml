@@ -1,59 +1,57 @@
-    version: "3.7"
+version: "3.7"
 
-    services:
-        # image project
-        app:
-            image: felipeaguiarphp/book-app:latest
-            restart: unless-stopped
-            working_dir: /var/www/
-            networks:
-                - laravel
-
-        nginx:
-            image: nginx:alpine
-            restart: unless-stopped
-            ports:
-                - "8989:80"
-            volumes:
-                - ./docker/nginx/:/etc/nginx/conf.d/
-            networks:
-                - laravel
-
-        # db mysql
-        db:
-            image: mysql:5.7.22
-            restart: unless-stopped
-            environment:
-                MYSQL_DATABASE: ${DB_DATABASE:-laravel}
-                MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
-                MYSQL_PASSWORD: ${DB_PASSWORD:-userpass}
-                MYSQL_USER: ${DB_USERNAME:-username}
-            volumes:
-                - ./.docker/mysql/dbdata:/var/lib/mysql
-            ports:
-                - "3307:3306"
-            networks:
-                - laravel
-        frontend:
-            build:
-                context: ../book-app-front
-                dockerfile: Dockerfile
-            container_name: book-app-frontend
-            ports:
-                - "8080:80"
-            networks:
-                - laravel
-        queue:
-            image: felipeaguiarphp/book-app:latest
-            command: php artisan queue:work database --sleep=3 --tries=3 --timeout=90
-            restart: unless-stopped
-            volumes:
-                - ./:/var/www
-            depends_on:
-                - db
-            networks:
-                - laravel
-
+services:
+  app:
+    image: felipeaguiarphp/book-app:latest
+    restart: unless-stopped
+    working_dir: /var/www/
     networks:
-        laravel:
-            driver: bridge
+      - laravel
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/:/etc/nginx/conf.d/ # só as configs, não o código
+    depends_on:
+      - app
+    networks:
+      - laravel
+
+  db:
+    image: mysql:5.7.22
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-laravel}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-userpass}
+      MYSQL_USER: ${DB_USERNAME:-username}
+    volumes:
+      - ./.docker/mysql/dbdata:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - laravel
+
+  frontend:
+    image: felipeaguiarphp/book-app-front:latest
+    container_name: book-app-frontend
+    ports:
+      - "8080:80"
+    networks:
+      - laravel
+
+  queue:
+    image: felipeaguiarphp/book-app:latest
+    command: php artisan queue:work database --sleep=3 --tries=3 --timeout=90
+    restart: unless-stopped
+    depends_on:
+      - db
+    networks:
+      - laravel
+
+networks:
+  laravel:
+    driver: bridge
