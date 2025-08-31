@@ -15,7 +15,6 @@
             ports:
                 - "8989:80"
             volumes:
-                - ./:/var/www
                 - ./docker/nginx/:/etc/nginx/conf.d/
             networks:
                 - laravel
