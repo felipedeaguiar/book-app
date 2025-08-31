@@ -34,15 +34,6 @@ services:
       - "3306:3306"
     networks:
       - laravel
-
-  frontend:
-    image: felipeaguiarphp/book-app-front:latest
-    container_name: book-app-frontend
-    ports:
-      - "8080:80"
-    networks:
-      - laravel
-
   queue:
     image: felipeaguiarphp/book-app:latest
     command: php artisan queue:work database --sleep=3 --tries=3 --timeout=90
@@ -51,6 +42,15 @@ services:
       - db
     networks:
       - laravel
+  frontend:
+    build:
+        context: ../book-app-front
+        dockerfile: Dockerfile
+    container_name: book-app-frontend
+    ports:
+        - "8080:80"
+    networks:
+        - laravel
 
 networks:
   laravel:
