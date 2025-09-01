@@ -12,7 +12,7 @@ services:
     image: nginx:alpine
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8989:80"
     volumes:
       - ./docker/nginx/:/etc/nginx/conf.d/ # só as configs, não o código
     depends_on:
@@ -31,7 +31,7 @@ services:
     volumes:
       - ./.docker/mysql/dbdata:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - laravel
   frontend:
@@ -40,7 +40,7 @@ services:
         dockerfile: Dockerfile
     container_name: book-app-frontend
     ports:
-        - "8080:80"
+        - "8081:80"
     networks:
         - laravel
 
