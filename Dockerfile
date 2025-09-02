@@ -25,7 +25,6 @@ RUN apt-get update && apt-get install -y \
         sockets \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-
 # Redis
 RUN pecl install redis && docker-php-ext-enable redis
 
@@ -40,14 +39,18 @@ RUN useradd -G www-data,root -u $uid -d /home/$user $user && \
 # Diretório do projeto
 WORKDIR /var/www
 
-# Copia o código Laravel (e muda o dono dos arquivos)
-COPY . /var/www
-RUN chown -R $user:$user /var/www
+# Copia apenas os arquivos de dependências primeiro (para cache eficiente)
+COPY --chown=$user:$user composer.json composer.lock ./
 
-# Adiciona diretório seguro do Git
-RUN git config --global --add safe.directory /var/www
+# Instala dependências sem scripts/autoloader ainda
+RUN composer install --no-dev --no-scripts --no-autoloader
 
-COPY ./docker/php/custom.ini /usr/local/etc/php/conf.d/uploads.ini
+# Copia o resto do código
+COPY --chown=$user:$user . .
 
-# Usa o novo usuário
-USER $user
+# Agora roda os scripts do Laravel e gera autoload otimizado
+RUN composer dump-autoload --optimize && \
+    composer run-script post-autoload-dump || true
+
+# Permissões para Laravel
+RUN
