@@ -40,7 +40,7 @@ services:
         dockerfile: Dockerfile
     container_name: book-app-frontend
     ports:
-        - "8081:80"
+        - "8080:80"
     networks:
         - laravel
 
