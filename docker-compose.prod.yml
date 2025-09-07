@@ -4,6 +4,8 @@ services:
   app:
     image: felipeaguiarphp/book-app:latest
     restart: unless-stopped
+    env_file: 
+      - .env
     working_dir: /var/www/
     networks:
       - laravel
