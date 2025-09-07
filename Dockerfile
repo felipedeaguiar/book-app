@@ -31,7 +31,7 @@ RUN pecl install redis && docker-php-ext-enable redis
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Cria usuário com mesmo UID que host
+# Cria usuário não-root com mesmo UID do host
 RUN useradd -G www-data,root -u $uid -d /home/$user $user && \
     mkdir -p /home/$user/.composer && \
     chown -R $user:$user /home/$user
@@ -39,18 +39,28 @@ RUN useradd -G www-data,root -u $uid -d /home/$user $user && \
 # Diretório do projeto
 WORKDIR /var/www
 
-# Copia apenas os arquivos de dependências primeiro (para cache eficiente)
+# Copia apenas arquivos de dependências primeiro (cache Docker)
 COPY --chown=$user:$user composer.json composer.lock ./
 
-# Instala dependências sem scripts/autoloader ainda
+# Instala dependências sem scripts/autoloader
 RUN composer install --no-dev --no-scripts --no-autoloader
 
 # Copia o resto do código
 COPY --chown=$user:$user . .
 
-# Agora roda os scripts do Laravel e gera autoload otimizado
+# Gera autoload otimizado e roda scripts do Laravel
 RUN composer dump-autoload --optimize && \
     composer run-script post-autoload-dump || true
 
-# Permissões para Laravel
-RUN
+# Ajusta permissões para Laravel
+RUN chown -R $user:www-data /var/www/storage /var/www/bootstrap/cache && \
+    chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
+# Configuração PHP customizada
+COPY ./docker/php/custom.ini /usr/local/etc/php/conf.d/uploads.ini
+
+# Define usuário não-root
+USER $user
+
+# Diretório de trabalho
+WORKDIR /var/www

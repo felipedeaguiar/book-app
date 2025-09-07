@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
 Route::get('/', function () {
-    return view('welcome');
+    return "api";
 });
 
 Route::get('/teste', function (Request $request) {
