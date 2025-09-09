@@ -76,7 +76,7 @@ class AuthController extends Controller
         $request->validate($rules);
 
         $email = $request->email;
-        
+
         try {
             $this->userService->sendResetLinkEmail($email);
         } catch (\Exception $e) {}
@@ -177,6 +177,27 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         $path = storage_path('app/'.$user->profile_pic);
+        $mimeType = mime_content_type($path);
+
+        return response()->file($path, [
+            'Content-Type' => $mimeType,
+        ]);
+    }
+
+    public function getPictureByUser($id)
+    {
+        $user = User::find($id);
+
+        if (empty($user) || empty($user->profile_pic)) {
+            return response()->json(['success' => false, 'message' => 'File not found'], 404);
+        }
+
+        $path = storage_path('app/'.$user->profile_pic);
+
+        if (!file_exists($path)) {
+            return response()->json(['success' => false, 'message' => 'File not found'], 404);
+        }
+
         $mimeType = mime_content_type($path);
 
         return response()->file($path, [

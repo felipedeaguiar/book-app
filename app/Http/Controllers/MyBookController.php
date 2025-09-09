@@ -40,6 +40,9 @@ class MyBookController extends Controller
             return response()->json(['success' => false, 'message' => 'Book not found'], 404);
         }
 
+        if ($myBook->pivot->current_page == 0) {
+            $myBook->pivot->current_page = 1;
+        }
 
         return response()->json(['success' => true, 'data' => $myBook]);
     }
@@ -165,7 +168,7 @@ class MyBookController extends Controller
             return response()->json(['success' => false, 'message' => 'File not found'], 404);
         }
 
-        $path     = storage_path('app/'.$myBook->file);
+        $path  = storage_path('app/'.$myBook->file);
 
         if (!file_exists($path)) {
             return response()->json(['success' => false, 'message' => 'File not found'], 404);

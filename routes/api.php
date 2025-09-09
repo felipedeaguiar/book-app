@@ -18,6 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/profile', [\App\Http\Controllers\AuthController::class,'updateProfile']);
     Route::post('/user/profile/picture', [\App\Http\Controllers\AuthController::class,'updatePicture']);
     Route::get('/user/profile/picture', [\App\Http\Controllers\AuthController::class,'getPicture'])->name('profilePic');
+    Route::get('/user/{id}/picture', [\App\Http\Controllers\AuthController::class,'getPictureByUser'])->name('getPictureByUser');
     Route::post('/logout', [\App\Http\Controllers\AuthController::class,'logout']);
     Route::post('/messages', [\App\Http\Controllers\MessageController::class,'store']);
     Route::get('/messages/{receiver_id}', [\App\Http\Controllers\MessageController::class,'getMessageFromReceiver']);
