@@ -4,9 +4,11 @@ services:
   app:
     image: felipeaguiarphp/book-app:latest
     restart: unless-stopped
-    env_file: 
+    env_file:
       - .env
     working_dir: /var/www/
+    volumes:
+      - storage:/var/www/html/storage
     networks:
       - laravel
 
@@ -45,6 +47,11 @@ services:
         - "8080:80"
     networks:
         - laravel
+volumes:
+  storage:
+    driver: local
+  dbdata:
+    driver: local
 
 networks:
   laravel:
