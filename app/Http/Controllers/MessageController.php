@@ -35,8 +35,15 @@ class MessageController extends Controller
                 $query->where('sender_id', $receiverId)
                       ->where('receiver_id', Auth::user()->id);
             })
-            ->orderBy('created_at', 'asc')
-            ->get();
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $pagination = [
+                'current_page' => $messages->currentPage(),
+                'last_page' => $messages->lastPage(),
+                'per_page' => $messages->perPage(),
+                'total' => $messages->total(),
+        ];
 
         $messages = $messages->map(function ($message) {
             return [
@@ -48,7 +55,7 @@ class MessageController extends Controller
             ];
         });
 
-        return response()->json(['success' => true, 'data' => $messages]);
+        return response()->json(['success' => true, 'data' => $messages, 'pagination' => $pagination]);
     }
 
     public function getMyMessages()
