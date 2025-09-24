@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/messages', [\App\Http\Controllers\MessageController::class,'store']);
     Route::get('/messages/{receiver_id}', [\App\Http\Controllers\MessageController::class,'getMessageFromReceiver']);
     Route::get('/messages', [\App\Http\Controllers\MessageController::class,'getMyMessages']);
-
+    Route::get('/contacts', [\App\Http\Controllers\ContactController::class,'index']);
 });
 
 Route::post('/login', [\App\Http\Controllers\AuthController::class,'login']);
