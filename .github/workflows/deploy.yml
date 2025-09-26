@@ -27,7 +27,7 @@ jobs:
 
             if [ ! -d "$APP_DIR" ]; then
               echo "Clonando projeto..."
-              sudo git clone https://github.com/felipedeaguiar/book-app.git $APP_DIR
+              git clone https://github.com/felipedeaguiar/book-app.git $APP_DIR
             fi
 
             cd $APP_DIR
