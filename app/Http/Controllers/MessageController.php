@@ -62,7 +62,6 @@ class MessageController extends Controller
     {
         $authId = auth()->id();
 
-// 1. Pegar os IDs dos usuários que conversaram com o logado
         $contactIds = Message::selectRaw("
     CASE
         WHEN sender_id = ? THEN receiver_id
@@ -71,6 +70,7 @@ class MessageController extends Controller
             ->where('sender_id', $authId)
             ->orWhere('receiver_id', $authId)
             ->groupBy('user_id')
+            ->orderByRaw('MAX(created_at) DESC')
             ->pluck('user_id');
 
 // 2. Para cada usuário, pegar a última mensagem
