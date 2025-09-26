@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
 Route::get('/', function () {
-    return "api";
+    return "health check";
 });
 
 Route::get('/teste', function (Request $request) {
