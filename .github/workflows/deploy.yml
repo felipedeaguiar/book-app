@@ -22,4 +22,19 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
           password: ${{ secrets.PASSWORD }}
-          script: "ls"
+        script: |
+          APP_DIR="/var/www/book-app"
+
+          if [ ! -d "$APP_DIR" ]; then
+            echo "Clonando projeto..."
+            git clone https://github.com/felipedeaguiar/book-app.git $APP_DIR
+          fi
+
+          cd $APP_DIR
+          git pull origin master
+
+          echo "Construindo imagens Docker..."
+          docker-compose -f docker-compose.prod.yml pull
+          docker-compose -f docker-compose.prod.yml up -d --build --remove-orphans
+          
+          echo "Recriando containers..."
