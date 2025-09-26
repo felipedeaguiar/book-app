@@ -23,7 +23,7 @@ jobs:
           port: ${{ secrets.PORT }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            APP_DIR="/var/www/book-app"
+            APP_DIR="$HOME/book-app"
 
             if [ ! -d "$APP_DIR" ]; then
               echo "Clonando projeto..."
