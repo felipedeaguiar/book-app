@@ -4,15 +4,12 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
   workflow_run:
     workflows: ["Build"]   # <- espera o workflow "Build"
     types:
       - completed
     branches:
-      - main
+      - master
       
 # Authenticate to the the server via ssh 
 # and run our deployment script 
