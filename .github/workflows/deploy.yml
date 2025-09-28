@@ -13,7 +13,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    workflows: ["build"]   # <- espera o workflow "Build"
+    workflows: ["Build"]   # <- espera o workflow "Build"
     steps:
       - uses: actions/checkout@v2
       - name: Deploy to server
