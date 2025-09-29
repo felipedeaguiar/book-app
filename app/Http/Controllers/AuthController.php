@@ -25,9 +25,9 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user  = User::where('email', $request->email)->first();
 
-            if (empty($user->email_verified_at)) {
-                throw new \Exception('É necessário ativar sua conta primeiro!');
-            }
+            // if (empty($user->email_verified_at)) {
+            //     throw new \Exception('É necessário ativar sua conta primeiro!');
+            // }
 
             $token = $user->createToken('api-token')->plainTextToken;
 
