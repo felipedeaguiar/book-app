@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http;
+namespace App\Services;
+
+use Illuminate\Support\Facades\Http;
 
 class GoogleService
 {
@@ -8,7 +10,7 @@ class GoogleService
 
     public function getVolumes(string $searchTerm)
     {
-        $response = \Http::get(self::googleApi.'/volumes?q='.$searchTerm.'&key='.env('GOOGLE_API_KEY'));
+        $response = Http::get(self::googleApi.'/volumes?q='.$searchTerm.'&key='.env('GOOGLE_API_KEY'));
         $response = json_decode($response->body());
 
         return $response;

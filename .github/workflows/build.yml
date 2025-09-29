@@ -14,7 +14,7 @@ jobs:
       # Baixa o código
       - name: Checkout
         uses: actions/checkout@v3
-
+    
       # Faz login no Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2

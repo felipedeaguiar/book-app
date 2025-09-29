@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\GoogleService;
 use App\Http\Requests\StoreBookRequest;
 use App\Models\Book;
+use App\Services\GoogleService as ServicesGoogleService;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
     protected $googleService;
 
-    public function __construct(GoogleService $googleService)
+    public function __construct(ServicesGoogleService $googleService)
     {
         $this->googleService = $googleService;
     }
