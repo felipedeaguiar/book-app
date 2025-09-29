@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\GoogleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PHPUnit\Framework\Constraint\ObjectHasProperty;
 
 class MyBookController extends Controller
 {
@@ -70,10 +71,10 @@ class MyBookController extends Controller
             if (property_exists($result, 'error')) {
                 throw new \Exception('Invalid book');
             }
-
+            
             $book         = new Book();
             $book->name   = $result->volumeInfo->title;
-            $book->author = $result->volumeInfo->authors ? $result->volumeInfo->authors[0] : '';
+            $book->author = isset($result->volumeInfo->authors) ? $result->volumeInfo->authors[0] : '';
             $book->pages  = $result->volumeInfo->pageCount;
             $book->image  = $result->volumeInfo->imageLinks->smallThumbnail;
             $book->google_id = $result->id;
