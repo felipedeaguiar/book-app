@@ -38,13 +38,6 @@ services:
       - "3306:3306"
     networks:
       - laravel
-  frontend:
-    image: felipeaguiarphp/book-app-front:latest
-    container_name: book-app-frontend
-    ports:
-        - "8080:80"
-    networks:
-        - laravel
 volumes:
   storage:
     driver: local
