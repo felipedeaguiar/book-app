@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/messages/{receiver_id}', [\App\Http\Controllers\MessageController::class,'getMessageFromReceiver']);
     Route::get('/messages', [\App\Http\Controllers\MessageController::class,'getMyMessages']);
     Route::get('/contacts', [\App\Http\Controllers\ContactController::class,'index']);
+    Route::post('/follow/{followed_id}', [\App\Http\Controllers\AuthController::class,'follow']);
 });
 
 Route::post('/login', [\App\Http\Controllers\AuthController::class,'login']);

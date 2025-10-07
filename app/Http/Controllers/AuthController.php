@@ -205,4 +205,28 @@ class AuthController extends Controller
         ]);
     }
 
+    public function follow($userId) 
+    {
+        $user = Auth::user();
+        $userIdToFollow = $userId;
+
+        if ($user->id == $userIdToFollow) {
+            return response()->json(['success' => false, 'message' => 'Você não pode seguir você mesmo'], 422);
+        }
+
+        $userToFollow = User::find($userIdToFollow);
+
+        if (empty($userToFollow)) {
+            return response()->json(['success' => false, 'message' => 'Usuário não encontrado'], 404);
+        }
+
+        if ($user->seguindo()->where('followed_id', $userIdToFollow)->exists()) {
+            return response()->json(['success' => false, 'message' => 'Você já está seguindo este usuário'], 422);
+        }
+
+        $user->seguindo()->attach($userIdToFollow);
+
+        return response()->json(['success' => true, 'message' => 'Você está seguindo '.$userToFollow->name], 200);    
+    }
+
 }

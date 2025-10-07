@@ -60,4 +60,15 @@ class User extends Authenticatable
             ->using(MyBook::class)
             ->withPivot(['id','current_page','status', 'file']);
     }
+
+
+    public function seguidores()
+    {
+        return $this->belongsToMany(User::class, 'user_followers', 'followed_id', 'follower_id')->withTimestamps();
+    }
+
+    public function seguindo()
+    {
+        return $this->belongsToMany(User::class, 'user_followers', 'follower_id', 'followed_id')->withTimestamps();
+    }
 }
