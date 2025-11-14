@@ -90,10 +90,10 @@ class AuthController extends Controller
 
     public function showProfile()
     {
-        $user = Auth::user();
+        $user = Auth::user()->load('generos');
         $user['photo'] = route('profilePic');
 
-        return response()->json(['success' => true, 'data' => Auth::user()], 200);
+        return response()->json(['success' => true, 'data' => $user], 200);
     }
 
     public function updateProfile(Request $request)
@@ -126,6 +126,8 @@ class AuthController extends Controller
             $user->fill($request->except('password'));
 
             $this->userService->save($user);
+
+            $user->generos()->sync($request->get('generos', []));
 
             return response()->json(['success' => true], 200);
 
@@ -205,7 +207,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function follow($userId) 
+    public function follow($userId)
     {
         $user = Auth::user();
         $userIdToFollow = $userId;
@@ -226,7 +228,7 @@ class AuthController extends Controller
 
         $user->seguindo()->attach($userIdToFollow);
 
-        return response()->json(['success' => true, 'message' => 'Você está seguindo '.$userToFollow->name], 200);    
+        return response()->json(['success' => true, 'message' => 'Você está seguindo '.$userToFollow->name], 200);
     }
 
 }

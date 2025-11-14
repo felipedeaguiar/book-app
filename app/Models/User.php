@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'bio',
     ];
 
     /**
@@ -33,7 +34,8 @@ class User extends Authenticatable
      const RULES = [
          'email' => ['required', 'email', 'unique:users'],
          'password' => ['required','min:8','max:20'],
-         'name'     => ['required', 'max:50']
+         'name'     => ['required', 'max:50'],
+         'bio'      => ['max:500']
      ];
 
     protected $hidden = [
@@ -61,7 +63,6 @@ class User extends Authenticatable
             ->withPivot(['id','current_page','status', 'file']);
     }
 
-
     public function seguidores()
     {
         return $this->belongsToMany(User::class, 'user_followers', 'followed_id', 'follower_id')->withTimestamps();
@@ -70,5 +71,10 @@ class User extends Authenticatable
     public function seguindo()
     {
         return $this->belongsToMany(User::class, 'user_followers', 'follower_id', 'followed_id')->withTimestamps();
+    }
+
+    public function generos()
+    {
+        return $this->belongsToMany(Genero::class, 'user_genero');
     }
 }
