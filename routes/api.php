@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/contacts', [\App\Http\Controllers\ContactController::class,'index']);
     Route::post('/follow/{followed_id}', [\App\Http\Controllers\AuthController::class,'follow']);
     Route::get('/generos', [\App\Http\Controllers\GeneroController::class,'index']);
+    Route::get('/dashboard/generos', [\App\Http\Controllers\DashboardController::class,'generos']);
 });
 
 Route::post('/login', [\App\Http\Controllers\AuthController::class,'login']);
